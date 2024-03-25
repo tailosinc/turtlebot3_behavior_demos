@@ -34,6 +34,11 @@ def generate_launch_description():
                 default_value=TextSubstitution(text="True"),
                 description="Enable vision behaviors. If false, do navigation only.",
             ),
+            DeclareLaunchArgument(
+                "shuffle_waypoints",
+                default_value=TextSubstitution(text="False"),
+                description="Whether to shuffle the order of the waypoints given in the location file.",
+            ),
             # Main autonomy node
             Node(
                 package="tb3_autonomy",
@@ -47,6 +52,7 @@ def generate_launch_description():
                         "target_color": LaunchConfiguration("target_color"),
                         "tree_type": LaunchConfiguration("tree_type"),
                         "enable_vision": LaunchConfiguration("enable_vision"),
+                        "shuffle_waypoints": LaunchConfiguration("shuffle_waypoints"),
                     }
                 ],
             ),

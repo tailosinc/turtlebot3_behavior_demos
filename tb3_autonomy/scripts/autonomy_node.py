@@ -39,13 +39,16 @@ class AutonomyBehavior(Node):
         self.declare_parameter("tree_type", value="queue")
         self.declare_parameter("enable_vision", value=True)
         self.declare_parameter("target_color", value="blue")
+        self.declare_parameter("shuffle_waypoints", value=False)
 
         # Parse locations YAML file and shuffle the location list.
         location_file = self.get_parameter("location_file").value
         with open(location_file, "r") as f:
             self.locations = yaml.load(f, Loader=yaml.FullLoader)
         self.loc_list = list(self.locations.keys())
-        random.shuffle(self.loc_list)
+
+        if self.get_parameter("shuffle_waypoints").value:
+            random.shuffle(self.loc_list)
 
         # Create and setup the behavior tree
         self.tree_type = self.get_parameter("tree_type").value
