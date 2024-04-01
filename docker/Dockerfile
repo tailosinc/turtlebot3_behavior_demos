@@ -70,12 +70,12 @@ RUN source /turtlebot3_ws/install/setup.bash \
 
 # Install extra tools for development
 RUN apt-get update && apt-get install -y --no-install-recommends \
- gdb gdbserver nano xterm 
+ gdb gdbserver nano xterm gedit
 
 # Install VSCODE
-RUN curl -o code_1.87.2-1709912201_amd64.deb https://vscode.download.prss.microsoft.com/dbazure/download/stable/863d2581ecda6849923a2118d93a088b0745d9d6/code_1.87.2-1709912201_amd64.deb
-RUN sudo apt install ./code_1.87.2-1709912201_amd64.deb -y
-RUN rm code_1.87.2-1709912201_amd64.deb
+# RUN curl -o code_1.87.2-1709912201_amd64.deb https://vscode.download.prss.microsoft.com/dbazure/download/stable/863d2581ecda6849923a2118d93a088b0745d9d6/code_1.87.2-1709912201_amd64.deb
+# RUN sudo apt install ./code_1.87.2-1709912201_amd64.deb -y
+# RUN rm code_1.87.2-1709912201_amd64.deb
 
 # allow new bash commands access to ros2 and install space pkgs 
 # (entry point script sources appropriate things)
