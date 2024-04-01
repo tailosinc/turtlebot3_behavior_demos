@@ -65,6 +65,23 @@ RUN source /turtlebot3_ws/install/setup.bash \
  && rosdep install --from-paths src --ignore-src --rosdistro ${ROS_DISTRO} -y \
  && colcon build --symlink-install
 
+# Install extra tools for development
+RUN apt-get update && apt-get install -y --no-install-recommends \
+ gdb gdbserver nano xterm 
+
+# Install VSCODE
+RUN curl -o code_1.87.2-1709912201_amd64.deb https://vscode.download.prss.microsoft.com/dbazure/download/stable/863d2581ecda6849923a2118d93a088b0745d9d6/code_1.87.2-1709912201_amd64.deb
+RUN sudo apt install ./code_1.87.2-1709912201_amd64.deb -y
+RUN rm code_1.87.2-1709912201_amd64.deb
+
+# allow new bash commands access to ros2 and install space pkgs 
+# (entry point script sources appropriate things)
+RUN echo "source /entrypoint.sh" >> ~/.bashrc
+
+## comment out rviz launch in launch file so we can do it manually 
+WORKDIR /turtlebot3_ws
+RUN cd install/turtlebot3_navigation2/share/turtlebot3_navigation2/launch && sed -i '78,84s/^/# /' navigation2.launch.py
+
 # Set up the entrypoint
 COPY ./docker/entrypoint.sh /
 ENTRYPOINT [ "/entrypoint.sh" ]
@@ -78,10 +95,6 @@ FROM overlay as dev
 ARG USERNAME=devuser
 ARG UID=1000
 ARG GID=${UID}
-
-# Install extra tools for development
-RUN apt-get update && apt-get install -y --no-install-recommends \
- gdb gdbserver nano
 
 # Create new user and home directory
 RUN groupadd --gid $GID $USERNAME \
