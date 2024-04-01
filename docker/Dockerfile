@@ -59,6 +59,9 @@ FROM base AS overlay
 # copy over script that will be useful to print commands to terminals for the students
 COPY ./docker/print_cmd.sh /
 
+# copy over script that contains useful commands for the students
+COPY ./docker/functions.sh /
+
 # Create an overlay Colcon workspace
 RUN mkdir -p /overlay_ws/src
 WORKDIR /overlay_ws
@@ -70,18 +73,19 @@ RUN source /turtlebot3_ws/install/setup.bash \
 
 # Install extra tools for development
 RUN apt-get update && apt-get install -y --no-install-recommends \
- gdb gdbserver nano xterm 
+ gdb gdbserver nano xterm
 
 # Install VSCODE
 RUN curl -o code_1.87.2-1709912201_amd64.deb https://vscode.download.prss.microsoft.com/dbazure/download/stable/863d2581ecda6849923a2118d93a088b0745d9d6/code_1.87.2-1709912201_amd64.deb
 RUN sudo apt install ./code_1.87.2-1709912201_amd64.deb -y
 RUN rm code_1.87.2-1709912201_amd64.deb
 
-# allow new bash commands access to ros2 and install space pkgs 
+# allow new bash commands access to ros2 and install space pkgs
 # (entry point script sources appropriate things)
 RUN echo "source /entrypoint.sh" >> ~/.bashrc
+RUN echo "source /functions.sh" >> ~/.bashrc
 
-## comment out rviz launch in launch file so we can do it manually 
+## comment out rviz launch in launch file so we can do it manually
 WORKDIR /turtlebot3_ws
 RUN cd install/turtlebot3_navigation2/share/turtlebot3_navigation2/launch && sed -i '78,84s/^/# /' navigation2.launch.py
 
@@ -113,9 +117,10 @@ RUN chown -R ${UID}:${GID} /overlay_ws/
 # Move Groot2 to new user's home directory and ensure it can be run
 RUN groupadd fuse \
  && usermod -aG fuse ${USERNAME}
-RUN mv /root/Groot2.AppImage /home/${USERNAME} \ 
+RUN mv /root/Groot2.AppImage /home/${USERNAME} \
  && chown ${UID}:${GID} /home/${USERNAME}/Groot2.AppImage
 
 # Set the user and source entrypoint in the user's .bashrc file
 USER ${USERNAME}
 RUN echo "source /entrypoint.sh" >> /home/${USERNAME}/.bashrc
+RUN echo "source /functions.sh" >> ~/.bashrc
