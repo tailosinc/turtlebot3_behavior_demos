@@ -56,6 +56,9 @@ ENTRYPOINT [ "/entrypoint.sh" ]
 ###########################################
 FROM base AS overlay
 
+# copy over script that will be useful to print commands to terminals for the students
+COPY ./docker/print_cmd.sh /
+
 # Create an overlay Colcon workspace
 RUN mkdir -p /overlay_ws/src
 WORKDIR /overlay_ws
